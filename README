@@ -1,0 +1,3 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=28
+
+I found that most of the time the only reason I exit from my Vim window is to change songs in XMMS. This script uses libcall () and a little library I wrote to control XMMS from Vim. You can change songs, change the volume, delete the playing song, shuffle play and pause.

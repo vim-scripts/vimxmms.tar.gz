@@ -1,0 +1,130 @@
+*vimxmms.txt*    Plugin that lets you control xmms from Vim
+
+
+                 Written by Danie Roux <droux@tuks.co.za>
+
+------------------------------------------------------------------------------
+                                                       *Vimxmms-introduction*
+
+You need my vimxmms library. If you have the file vimxmms.so, you got it. If
+you have vimxmms.c, check in the file for instructions on how to compile it.
+
+If you need to ask why I wrote this plugin and library, then don't bother :-)
+
+Seriously, I spend most of my time editing text, and I found I was switching
+tasks just to press 'B' to skip a song. I also noticed I never used my
+navigation keys on my keyboard. And it was high time I learned how to do a bit
+of Vim scripting.
+
+I provide no mappings, since mine is very intrusive. Instead I give you a few
+functions, two variables to set and my example mappings.
+
+------------------------------------------------------------------------------
+                          *Vimxmms-variables* *Vimxmms_lib* *Vimxmms_libxmms*
+
+The two variables you need to set are Vimxmms_lib and Vimxmms_libxmms.
+
+Vimxmms_libxmms has a default of "/usr/lib/libxmms.so" which would be fine for
+most people.
+
+Place vimxmms.so somewhere (I prefer ~/.vim/plugin, but /usr/local/lib is more
+correct). Now put a line like this in your .vimrc file:
+
+let g:Vimxmms_lib = "/usr/local/lib/vimxmms.so"
+
+Now you can start mapping.
+
+------------------------------------------------------------------------------
+                                                          *Vimxmms-functions*
+
+These are the functions you can map:
+
+VimxmmsToggleShuffle() *
+    Toggles whether xmms plays the playlist in order, or
+    shuffled. Returns a string telling the current state.
+
+VimxmmsTogglePause() *
+    Pauses and unpauses xmms. Returns a string telling the current state.
+
+VimxmmsNextSong()
+    Skips playlist to next song, and returns the song that is playing as a
+    string.
+
+VimxmmsQuickNextSong() *
+    Skips to the next song, but doesn't get the name of the current
+    playing song. Very fast.
+
+VimxmmsPrevSong()
+    Skips playlist to previous song, and returns the song that is playing as a
+    string.
+
+VimxmmsQuickPrevSong() *
+    Skips to the previous song, but doesn't get the name of the current
+    playing song. Very fast.
+
+VimxmmsCurrentlyPlaying()
+    Returns the currently playing song as a string.
+
+VimxmmsForward(seconds)
+    How many seconds the song must be forwarded.
+
+VimxmmsBack(seconds)
+    How many seconds you want to go back in the song.
+
+VimxmmsVolumeUp(percentage_points)
+    By how many percentage points you want to increase the volume.
+
+VimxmmsVolumeDown(percentage_points)
+    By how many percentage points you want to decrease the volume.
+
+VimxmmsGetTime()
+    Gets the current position in the song in seconds. Not very useful by
+    itself. See next function.
+
+VimxmmsSetTime(time)
+    Sets the position in the song. This is very useful if you want to type out
+    the lyrics of the song. Map it like this:
+
+    map ` :let songpos=VimxmmsGetTime()<cr>
+    map <BS> :call VimxmmsSetTime(songpos)<cr>
+
+    Then you can press ` at the start of a line,and press <BS> to listen to it
+    over and over.
+
+VimxmmsDeletePlaying()
+    Deletes the currently playing song. Best to make this a difficult mapping
+    to type!
+
+    For this to work, you need to tell xmms, under the libmpg123 plugin
+    options, to output in the format: %8/%7.%9
+
+VimxmmsQuit() *
+    Closes xmms.
+
+* Doesn't use the extra library. They were the first I mapped. But then I
+  wanted to adjust the volume as well. And my original 6 mappings got out of
+  hand.
+
+------------------------------------------------------------------------------
+                                                   *Vimxmms-example-mappings*
+
+map <Home> :silent !xmms --play &<cr>:echo "XMMS started"<cr>
+map <End> :call VimxmmsQuit ()<cr>:echo "XMMS killed"<cr>
+
+map <S-Ins> :echo VimxmmsToggleShuffle()<cr>
+map <Ins> :echo VimxmmsTogglePause()<cr>
+
+map <PageDown> :echo "XMMS Currently playing: ".VimxmmsNextSong ()<cr>
+map <PageUp> :echo "XMMS Currently playing: ".VimxmmsPrevSong ()<cr>
+
+map <Right> :call VimxmmsForward (5) <cr>:echo "XMMS forwarded 5 seconds"<cr>
+map <Left> :call VimxmmsBack (5) <cr>:echo "XMMS rewinded 5 seconds"<cr>
+map <Up> :echo "XMMS volume: ".VimxmmsVolumeUp (2)."%"<cr>
+map <Down> :echo "XMMS volume: ".VimxmmsVolumeDown (2)."%"<cr>
+
+map <Del> :echo VimxmmsCurrentlyPlaying ()<cr>
+
+map <S-Del> :call VimxmmsDeletePlaying ()<cr>
+
+==============================================================================
+ vim:tw=78:
